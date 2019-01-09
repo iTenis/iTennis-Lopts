@@ -4,7 +4,7 @@
 
 | 功能选项：功能名称                  | 使用场景说明                                                 |
 | ----------------------------------- | ------------------------------------------------------------ |
-| [1]：配置PXE环境(bios/uefi)         | 自动化安装（Redhat和Centos）操作系统                         |
+| [1]：配置PXE环境(bios/uefi)         | 自动化安装（Redhat和Centos）操作系统，目前测试版本6和版本7均支持bios和uefi模式 |
 | [2]：更换PXE批量安装的服务器        | 更换现有PXE批量安装的操作系统环境                            |
 | [3]：批量修改文件内容               | 修改、替换和删除内容（包括配置文件中的值或任意文本）         |
 | [4]：批量双网卡绑定Bond模式配置     | 可以做多组Bond模式的双网卡绑定                               |
@@ -40,19 +40,21 @@
 
 1）主要集成了redhat和centos两种操作系统的批量安装操作系统的方法，集成的版本列表如下：
 
-| 操作系统       | 版本 |
-| -------------- | ---- |
-| centos、redhat | 6.6  |
-| centos、redhat | 6.7  |
-| centos、redhat | 6.8  |
-| centos、redhat | 6.9  |
-| centos、redhat | 7.0  |
-| centos、redhat | 7.1  |
-| centos、redhat | 7.2  |
-| centos、redhat | 7.3  |
-| centos、redhat | 7.4  |
-| centos、redhat | 7.5  |
-| centos、redhat | 7.6  |
+| 操作系统       | 版本      |
+| -------------- | --------- |
+| centos、redhat | 6版本以上 |
+| centos、redhat | 6.6       |
+| centos、redhat | 6.7       |
+| centos、redhat | 6.8       |
+| centos、redhat | 6.9       |
+| centos、redhat | 7.0       |
+| centos、redhat | 7.1       |
+| centos、redhat | 7.2       |
+| centos、redhat | 7.3       |
+| centos、redhat | 7.4       |
+| centos、redhat | 7.5       |
+| centos、redhat | 7.6       |
+| centos、redhat | 7版本最新 |
 
 2）PXE的配置文件
 
