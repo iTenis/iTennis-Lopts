@@ -1,0 +1,149 @@
+#!/bin/bash
+source_functions()
+{
+	. scripts/log_print
+	
+}
+###################################################
+#
+# 在远端服务器运行命令
+#
+###################################################
+function exec_cmd_r()
+{
+    local g_port=$1
+    local g_user_name=$4
+    local g_timeout=$2
+    local host=$3       #远端主机名
+    local passwd=$5     #主机密码
+    local command=$6    #运行的命令
+    local ret=0           #返回值
+    local cmd_file="/tmp/exec_cmd_r.$$.$(date +%s%N)"
+    source_functions
+    #入参判断
+    if [ -z "$host" ]; then
+        error "host is null"
+        return 1
+    fi
+
+    if [ -z "$command" ]; then
+        error "command is null"
+        return 1
+    fi
+	ping -c 3 -i 0.2 -W 3 $host &> /dev/null
+        if [ $? != 0 ];then
+                log ERROR "Ping $host failed"
+                exit
+        fi
+
+    #scripts/remote.sh -i 192.168.38.141 -p root -t 5 -m ssh-cmd -c "ls ~"
+    bash scripts/remote.sh -i "$host" -P "$g_port" -u "$g_user_name" -p "$passwd" -t "$g_timeout" -m "ssh-cmd" -c "$command" > ${cmd_file}
+    ret=$?
+    cat "${cmd_file}" | grep -v "^spawn ssh" | grep -v "^Warning" | grep -v "^Password:" | grep -v "^Authorized" | grep -v "password:" | grep -v "^Permission denied"
+    rm "${cmd_file}" -f         
+    if [ $ret -ne 0 ]; then
+        log ERROR "Run ${command} in ${host} failed, ret code:${ret}"
+    else
+        log INFO "Run ${command} in ${host} success"
+    fi
+    return $ret
+}
+
+###################################################
+#
+# 把文件拷贝至远端服务器
+#
+###################################################
+function cp_file_to_r()
+{
+    local g_port=$1
+    local g_user_name=$4
+    local g_timeout=$2
+    local host=$3       #远端主机名
+    local passwd=$5     #主机密码
+    local src=$6        #源文件
+    local dst=$7        #目标文件
+    local ret=0           #返回值
+    source_functions
+    #入参判断
+    if [ -z "$host" ]; then
+        log ERROR "host is null"
+        return 1
+    fi
+
+    if [ -z "$src" ]; then
+        log ERROR "src is null"
+        return 1
+    fi
+
+    if [ -z "$dst" ]; then
+        log ERROR "dst is null"
+        return 1
+    fi
+        ping -c 3 -i 0.2 -W 3 $host &> /dev/null
+        if [ $? != 0 ];then
+                log ERROR "Ping $host failed"
+                exit
+        fi
+    #./remote.sh -i 192.168.38.141 -p root -t 5 -m ssh-cmd -c "ls ~"
+    bash scripts/remote.sh -i "$host" -P "$g_port" -u "$g_user_name" -p "$passwd" -t "$g_timeout" -m "scp-out" -s "$src" -d "$dst" > /dev/null 2>&1
+    ret=$?
+    if [ $ret -ne 0 ]; then
+        log ERROR "Put ${src} to ${host}:${dst} failed , ret code:${ret}"
+    else
+        log INFO "Put ${src} to ${host}:${dst} successfully."
+    fi
+
+    return $ret
+}
+##################################################
+#
+# 把远端服务器文件拷贝至本地
+#
+###################################################
+function cp_file_from_r()
+{
+    local g_port=$1
+    local g_user_name=$4
+    local g_timeout=$2
+    local host=$3       #远端主机名
+    local passwd=$5     #主机密码
+    local src=$6        #源文件
+    local dst=$7        #目标文件
+    local ret=0           #返回值
+    local name=""
+    local ret=0           #返回值
+
+    #入参判断
+    if [ -z "$host" ]; then
+        log ERROR "host is null"
+        return 1
+    fi
+
+    if [ -z "$src" ]; then
+        log ERROR "src is null"
+        return 1
+    fi
+
+    if [ -z "$dst" ]; then
+        log ERROR "dst is null"
+        return 1
+    fi
+        ping -c 3 -i 0.2 -W 3 $host &> /dev/null
+        if [ $? != 0 ];then
+                log ERROR "Ping $host failed"
+                exit
+        fi
+    #获取 源文件的文件名称
+    name="${host}_$(basename "${src}")"
+    
+    bash scripts/remote.sh -i "$host" -P "$g_port" -u "$g_user_name" -p "$passwd" -t "$g_timeout" -m "scp-in" -s "$src" -d "${dst}/${name}" > /dev/null 2>&1
+    ret=$?
+    if [ $ret -ne 0 ]; then
+        log ERROR "get ${dst}/${name} from ${host}:${src} failed , ret code:${ret}"
+    else
+        log INFO "get ${dst}/${name} from ${host}:${src} successfully."
+    fi
+
+    return $ret
+}

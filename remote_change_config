@@ -1,0 +1,54 @@
+#!/bin/bash
+
+source_functions()
+{
+	. conf/itennis.conf
+	. scripts/log_print
+	. scripts/exec_remote
+	
+}
+
+show_help()
+{
+ 	echo
+	echo "Usage: remote_change_config parameter1 parameter2 parameter3"
+	echo "以下变量说明:"
+	echo "    parameter1:需要修改旧内容"
+	echo "    parameter2:需要修改新内容"
+	echo "    parameter3:需要修改的文件"
+	echo
+	return 0
+}
+
+main()
+{
+	source_functions
+	if [ $# -lt 3 ]; then
+		show_help
+		return 1
+	fi
+
+	timeout=$REMOTE_TIMEOUT
+	port=$REMOTE_PORT
+	old_config=$1
+	new_config=$2
+	config_file=$3
+	cmd="sed -i 's/$old_config/$new_config/g' $config_file"
+	grep -v "^#" conf/hosts.list | while read line
+	do
+		host_ip=`echo $line | awk '{print $1}'`
+		username=`echo $line | awk '{print $3}'`
+		password=`echo $line | awk '{print $4}'`
+		 exec_cmd_r $port $timeout $host_ip $username $password "if [[ \` grep -v '^#' $3 | grep -i '$2' | wc -l\` == 0 || '$2' == '' ]];then  $cmd; fi"
+
+		if [ $? == 0 ];then
+			log INFO "$cmd execute in $host_ip success"
+		else
+			log ERROR "$cmd execute in $host_ip failed"
+		fi
+	done
+
+}
+umask 027
+main "$@"
+exit $?

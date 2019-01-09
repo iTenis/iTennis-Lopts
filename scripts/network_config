@@ -1,0 +1,19 @@
+#!/bin/bash
+function inetwork {
+	if [ ! -f "/etc/sysconfig/network-scripts/ifcfg-$1" ];then
+	{
+		return 1;
+	}
+	fi
+	cp -rvf /etc/sysconfig/network-scripts/ifcfg-$1 /tmp/ifcfg-$1-bak
+	sed -i '/^ONBOOT/d' /etc/sysconfig/network-scripts/ifcfg-$1
+	sed -i '/^IPADDR/d' /etc/sysconfig/network-scripts/ifcfg-$1
+	sed -i '/^NETMASK/d' /etc/sysconfig/network-scripts/ifcfg-$1
+	sed -i '/^BOOTPROTO/d' /etc/sysconfig/network-scripts/ifcfg-$1
+	sed -i '/^GATEWAY/d' /etc/sysconfig/network-scripts/ifcfg-$1
+	sed -i '/^DNS*/d' /etc/sysconfig/network-scripts/ifcfg-$1
+	echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-$1	
+	echo "BOOTPROTO=static" >> /etc/sysconfig/network-scripts/ifcfg-$1
+	echo "IPADDR=$2" >> /etc/sysconfig/network-scripts/ifcfg-$1
+	echo "NETMASK=$3" >> /etc/sysconfig/network-scripts/ifcfg-$1
+}

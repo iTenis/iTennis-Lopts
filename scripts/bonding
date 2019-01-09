@@ -1,0 +1,164 @@
+#!/bin/bash
+interbonddir=/etc/sysconfig/network-scripts
+bondethxy=bond0
+bondethx=eth0		#绑定网卡的名称1
+bondethy=eth1		#绑定网卡的名称2
+modeinfo=4
+ipaddr=172.16.9.9	#绑定接口的ip地址
+gateway=172.16.9.254	#绑定接口的网关
+netmask=255.255.0.0	#绑定接口的子网掩码
+dnsServer=114.114.114.114
+isContinue='y'
+function isNext()
+{
+        read -p 'Are you sure ,continue?[y/n]' isContinue
+        if [ "$isContinue" = "n" ];then exit; else continue; fi
+}
+function config_parameter()
+{
+echo "以下是提供要配置的网口名称:"
+#ip -o link |cut -d":" -f 1-2
+echo "请选择绑定的接口一："
+j=0
+for i in `ip -o link |cut -d":" -f 2`
+do
+((j++))
+echo "[$j]:$i"
+eth[$j]=$i
+done
+read -p "please input [1-$j]: " INPUT
+bondethx=${eth[$INPUT]}
+echo "请选择绑定的接口二："
+j=0
+for i in `ip -o link |cut -d":" -f 2`
+do
+((j++))
+echo "[$j]:$i"
+eth[$j]=$i
+done
+read -p "please input [1-$j]: " INPUT
+bondethy=${eth[$INPUT]}
+echo "您选择接口为：${bondethx} and ${bondethy}"
+
+read -p "please input bond name[$bondethxy]: " INPUT
+if [ x$INPUT != x ]; then
+    bondethxy=$INPUT
+fi
+
+read -p "please input bond address[$ipaddr]: " INPUT
+if [ x$INPUT != x ]; then
+    ipaddr=$INPUT
+fi
+read -p "please input bond netmask prefix[$netmask]: " INPUT
+if [ x$INPUT != x ]; then
+    netmask=$INPUT
+fi
+read -p "please input bond gateway address[$gateway]: " INPUT
+if [ x$INPUT != x ]; then
+    gateway=$INPUT
+fi
+read -p "please input bond mode[$modeinfo]: " INPUT
+if [ x$INPUT != x ]; then
+    modeinfo=$INPUT
+fi
+read -p "please input bond DNS address[$dnsServer]: " INPUT
+if [ x$INPUT != x ]; then
+    dnsServer=$INPUT
+fi
+read -p "please input interface file directory[$interbonddir]: " INPUT
+if [ x$INPUT != x ]; then
+    interbonddir=$INPUT
+fi
+echo -e "*****************************************************************"
+echo -e "******************请您核对配置的信息：***************************"
+echo -e "*********绑定的第一块网卡为：\033[31m${bondethx}\033[0m"
+echo -e "*********绑定的第二块网卡为：\033[31m${bondethy}\033[0m"
+echo -e "***********配置的Bond名称为：\033[31m${bondethxy}\033[0m"
+echo -e "*********配置的BondIP地址为：\033[31m${ipaddr}\033[0m"
+echo -e "*配置的Bond的子网掩码地址为：\033[31m${netmask}\033[0m"
+echo -e "*******配置的Bond网关地址为：\033[31m${gateway}\033[0m"
+echo -e "*********配置的Bond的模式为：\033[31m${modeinfo}\033[0m"
+echo -e "******配置的Bond的DNS地址为：\033[31m${dnsServer}\033[0m"
+echo -e "***********配置接口的目录为：\033[31m${interbonddir}\033[0m"
+echo -e "*****************************************************************"
+}
+config_parameter
+isNext
+function createbond()
+{
+(
+cat << EOF
+DEVICE=${bondethxy}
+NAME=${bondethxy}
+TYPE=Bond
+ONBOOT=yes
+BOOTPROTO=static
+BONDING_MASTER=yes
+BONDING_OPTS="mode=${modeinfo} miimon=50 updelay=0 downdelay=0 lacp_rate=fast"
+IPADDR=$ipaddr
+GATEWAY=$gateway
+NETMASK=$netmask
+#DNS1=$dnsServer
+EOF
+) > ${interbonddir}/ifcfg-${bondethxy}
+}
+
+cp ${interbonddir}/ifcfg-$bondethx ${interbonddir}/ifcfg-$bondethx-bak
+cp ${interbonddir}/ifcfg-$bondethy ${interbonddir}/ifcfg-$bondethy-bak
+
+(
+cat << EOF
+alias ${bondethxy} bonding
+options ${bondethxy} miimon=50  mode=${modeinfo}
+EOF
+) >> /etc/modprobe.d/dist.conf
+
+sed -i '/^MASTER/d' ${interbonddir}/ifcfg-$bondethx
+sed -i '/^SLAVE/d' ${interbonddir}/ifcfg-$bondethx
+sed -i '/^BOOTPROTO/d' ${interbonddir}/ifcfg-$bondethx
+sed -i '/^ONBOOT/d' ${interbonddir}/ifcfg-$bondethx
+sed -i '/^IPADDR/d' ${interbonddir}/ifcfg-$bondethx
+sed -i '/^NETMASK/d' ${interbonddir}/ifcfg-$bondethx
+sed -i '/^GATEWAY/d' ${interbonddir}/ifcfg-$bondethx
+
+sed -i '/^MASTER/d' ${interbonddir}/ifcfg-$bondethy
+sed -i '/^SLAVE/d' ${interbonddir}/ifcfg-$bondethy
+sed -i '/^BOOTPROTO/d' ${interbonddir}/ifcfg-$bondethy
+sed -i '/^ONBOOT/d' ${interbonddir}/ifcfg-$bondethy
+sed -i '/^IPADDR/d' ${interbonddir}/ifcfg-$bondethy
+sed -i '/^NETMASK/d' ${interbonddir}/ifcfg-$bondethy
+sed -i '/^GATEWAY/d' ${interbonddir}/ifcfg-$bondethY
+
+(
+cat << EOF
+BOOTPROTO=none
+ONBOOT=yes
+MASTER=${bondethxy}
+SLAVE=yes
+EOF
+) >> ${interbonddir}/ifcfg-$bondethx
+
+(
+cat << EOF
+BOOTPROTO=none
+ONBOOT=yes
+MASTER=${bondethxy}
+SLAVE=yes
+EOF
+) >> ${interbonddir}/ifcfg-$bondethy
+
+echo -e "$bondethx and $bondethy have been add \033[32m successfully \033[0m "
+if [ ! -e "${interbonddir}/ifcfg-${bondethxy}" ]
+then		
+	createbond
+else
+	mv ${interbonddir}/ifcfg-${bondethxy} ${interbonddir}/ifcfg-${bondethxy}-bak
+	createbond
+fi
+echo -e "${bondethxy} have been create \033[32m successfully \033[0m"
+service network restart
+if [ ! $? ];then
+	echo -e "service restart \033[31m failed \033[0m"
+else
+	echo -e "service restart \033[32m successfully \033[0m"
+fi

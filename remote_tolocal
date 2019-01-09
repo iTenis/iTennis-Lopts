@@ -1,0 +1,47 @@
+#!/bin/bash
+
+source_functions()
+{
+	. conf/itennis.conf
+	. scripts/log_print
+	. scripts/exec_remote
+	
+}
+
+show_help()
+{
+ 	echo
+	echo "Usage: remote_tolocal parameter1 parameter2"
+	echo "以下变量说明:"
+	echo "    parameter1:原文件"
+	echo "    parameter2:目的路径"
+	echo
+	return 0
+}
+
+main()
+{
+	source_functions
+	if [ $# -lt 2 ]; then
+		show_help
+		return 1
+	fi
+	source_functions
+
+	timeout=$REMOTE_TIMEOUT
+	port=$REMOTE_PORT
+	src=$1
+	dest=$2
+
+	grep -v "^#" conf/hosts.list | while read line
+	do
+		host_ip=`echo $line | awk '{print $1}'`
+		username=`echo $line | awk '{print $3}'`
+		password=`echo $line | awk '{print $4}'`
+
+		cp_file_from_r $port $timeout $host_ip $username $password "$src" "$dest"
+	done 
+}
+umask 027
+main "$@"
+exit $?

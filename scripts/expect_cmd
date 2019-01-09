@@ -1,0 +1,25 @@
+#!/bin/sh
+# \
+exec expect -- "$0" ${1+"$@"}
+set timeout 10
+set host [lindex $argv 0]
+set username [lindex $argv 1]
+set password [lindex $argv 2]
+set cmds [lindex $argv 3]
+spawn ssh $username@$host
+ expect {
+ "(yes/no)?"
+  {
+  send "yes\n"
+  expect "*assword:" { send "$password\n"}
+ }
+ "*assword:"
+{
+ send "$password\n"
+}
+}
+expect "]#"
+send "${cmds}\n"
+expect "]#"
+send "exit\n"
+expect eof

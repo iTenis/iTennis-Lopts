@@ -1,0 +1,107 @@
+#!/bin/bash
+#挂载本操作系统的ISO文件
+
+declare cur_path=""	# script path
+declare script_name=""	# script name
+
+get_cur_path()
+{
+	cd "$(dirname "${BASH_SOURCE-$0}")"
+	cur_path="${PWD}"
+	script_name="$(basename "${BASH_SOURCE-$0}")"
+	cd - >/dev/null
+}
+source_functions()
+{
+	get_cur_path
+	. $cur_path/log_print
+	
+}
+
+
+show_help()
+{
+ 	echo
+	echo "Usage: config_mount_IOS parameter1 parameter2"
+	echo "以下变量说明:"
+	echo "    parameter1:操作系统镜像文件,默认在from_iso文件夹下"
+	echo "    parameter2:挂载的目录，默认为/media"
+	echo
+	return 0
+}
+config_mount_IOS()
+{ 
+	if [ $# -lt 2 ]; then
+		show_help
+		return 1
+	fi
+	
+	if [ "`ls -A $2`" != "" ];then
+		umount $2 &> /dev/null
+		mount -o loop $1 $2 &> /dev/null
+		log WARN "path:$2 is not empty ! mount reconfig success"
+	else
+		mount -o loop $1 $2 &> /dev/null
+		log INFO "mount configure success"		
+	fi
+	return 0
+}
+config_local_yum()
+{
+	yum_dir="/etc/yum.repos.d"
+	if [ ! -d "${yum_dir}/bak" ]; then
+		mkdir ${yum_dir}/bak
+	else 
+		log INFO "path:${yum_dir}/bak is exists"
+	fi
+	mv ${yum_dir}/*.repo ${yum_dir}/bak/
+(
+cat << EOF
+[local]
+name=local
+baseurl=file://$1
+gpgcheck=0
+enabled=1
+EOF
+) > ${yum_dir}/local.repo
+	
+	if [ "`yum repolist | grep local | awk '{print $3}'`" = "0" ];then
+		log ERROR "Yum.repo configuration failed"
+		return 1
+	else 
+		log INFO "Yum.repo configuration successful"
+	fi
+}
+
+
+################################################################################
+# Function: main
+# Description: N/A
+# Parameter:
+#   input:
+#   N/A
+#   output:
+#   N/A
+# Return: 0 -- success; not 0 -- failure
+# Others: N/A
+################################################################################
+main()
+{
+	source_functions
+	log INFO "*****************START*******************"
+	log INFO "提示 >>>> 请准备好本操作系统镜像放在工具主目录的from_iso下"
+	get_cur_path
+	if [ `ls -A $cur_path/../from_iso/*.iso | wc -w` == 0 ];then
+		log ERROR "$cur_path/../from_iso/*.iso file is not found,please check you iso file in from_iso!"
+		return 1
+	fi
+	config_mount_IOS $cur_path/../from_iso/*.iso /media
+	if [ $? != 0 ];then return 1 ;fi
+	config_local_yum /media
+	if [ $? != 0 ];then return 1 ;fi
+	log INFO "*****************END********************"
+}
+
+umask 027
+main "$@"
+exit $?

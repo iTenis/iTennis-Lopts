@@ -1,0 +1,7 @@
+default=0
+splashimage=(nd)/splash.xpm.gz
+timeout=5
+title CentOS 6 UEFI
+	root (nd)
+        kernel /../images/redhat/6.6/vmlinuz ks=http://10.9.9.9/kickstarts/redhat_6.6_ks.cfg repo=http://10.9.9.9/os/redhat/6.6 ksdevice=eth0 ip=dhcp
+        initrd /../images/redhat/6.6/initrd.img

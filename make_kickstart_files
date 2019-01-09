@@ -1,0 +1,83 @@
+#!/bin/bash
+(
+cat << EOF
+firewall --disabled
+install
+url --url="http://$1/os/$2/$3"
+rootpw --plaintext $4
+auth  --useshadow  --passalgo=sha512
+#graphical
+text
+keyboard us
+lang en_US.UTF-8
+selinux --disabled
+skipx
+logging --level=info
+reboot
+timezone --utc Asia/Shanghai
+xconfig  --startxonboot
+network  --bootproto=dhcp --device=eth0 --onboot=on
+bootloader --location=mbr
+zerombr
+clearpart --all --initlabel
+#part / --fstype="ext4" --grow --ondisk=sda --size=1
+#part /tmp --fstype="ext4" --ondisk=sda --size=20480
+#part swap --fstype="swap" --size=500
+
+%post
+service iptables stop
+chkconfig iptables off
+%end
+
+%packages --ignoremissing
+@Base
+@Core
+@Desktop
+@Fonts
+@General Purpose Desktop
+@Internet Browser
+@Printing client
+@X Window System
+@base
+@core
+@desktop-debugging
+@dial-up
+@directory-client
+@fonts
+@gnome-desktop
+@guest-desktop-agents
+@input-methods
+@internet-browser
+@java-platform
+@multimedia
+@network-file-system-client
+@print-client
+@x11
+binutils
+chrony
+ftp
+gcc
+kernel-devel
+kexec-tools
+make
+open-vm-tools
+patch
+python
+
+%end
+#%addon com_redhat_kdump --disable --reserve-mb='auto'
+#%end
+EOF
+) > $5
+partlist=""
+cat conf/partitions.conf | while read lines
+do
+if [ `echo $lines | awk '{print $3}'` = 1  ];then
+partlist="part `echo $lines | awk '{print $1}'` --fstype=\"`echo $lines | awk '{print $2}'`\" --grow --ondisk=sda --size=`echo $lines | awk '{print $3}'`"
+else
+partlist="part `echo $lines | awk '{print $1}'` --fstype=\"`echo $lines | awk '{print $2}'`\" --ondisk=sda --size=`echo $lines | awk '{print $3}'`"
+fi
+echo $partlist >> $5
+done
+echo -e "ks.cfg is create \033[32mSuccessful\033[0m"
+

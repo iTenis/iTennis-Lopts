@@ -1,0 +1,33 @@
+#!/bin/bash
+auto_ssh_copy_id() {
+    expect -c "set timeout -1;
+        spawn ssh-copy-id $1;
+        expect {
+            *(yes/no)* {send -- yes\r;exp_continue;}
+            *assword:* {send -- $2\r;exp_continue;}
+            eof        {exit 0;}
+        }";
+}
+
+ssh_copy_id_to_all() {
+list_file=$1
+cat $list_file | while read line
+do
+	SERVERS=`echo $line | awk '{print $1}'`
+	PASSWORD=`echo $line | awk '{print $4}'`
+	auto_ssh_copy_id $SERVERS $PASSWORD
+done
+}
+expect -c "set timeout -1;
+        spawn ssh-keygen;
+        expect {
+            *(yes/no)* {send -- yes\r;exp_continue;}
+            *(y/n)* {send -- y\r;exp_continue;}
+            *assword:* {send -- $2\r;exp_continue;}
+            *id_rsa):* {send -- \n\r;exp_continue;}
+            *phrase):* {send -- \n\r;exp_continue;}
+              *again:* {send -- \n\r;exp_continue;}
+            eof        {exit 0;}
+        }";
+ssh_copy_id_to_all $1
+

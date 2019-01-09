@@ -1,0 +1,8 @@
+#!/bin/bash
+function i_packets()
+{
+	for pk in `cat conf/packets_install.conf`
+	do
+		yum install -y $pk &>> $logfile && log INFO  "yum install ${pk} Successful" || log ERROR  "yum install ${pk}"
+	done
+}

@@ -1,0 +1,15 @@
+#!/bin/bash
+(
+cat << EOF
+default=0
+splashimage=(nd)/splash.xpm.gz
+timeout=5
+title $2 UEFI
+	root (nd)
+        kernel /../images/$2/$3/vmlinuz ip=dhcp ks=http://$1/kickstarts/$2_$3_ks.cfg repo=http://$1/os/$2/$3 ksdevice=$4
+        initrd /../images/$2/$3/initrd.img
+
+EOF
+) > /var/lib/tftpboot/efi/efidefault
+echo -e "/var/lib/tftpboot/efi/efidefault is create \033[32mSuccessful\033[0m"
+

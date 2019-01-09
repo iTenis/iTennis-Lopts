@@ -1,0 +1,41 @@
+#!/bin/bash
+
+source_functions()
+{
+	. conf/itennis.conf
+	. scripts/log_print
+	. scripts/exec_remote
+	
+}
+show_help()
+{
+ 	echo
+	echo "Usage: remote_cmd parameter1"
+	echo "以下变量说明:"
+	echo "    parameter1:执行语句(shell命令)"
+	echo
+	return 0
+}
+
+main()
+{
+	source_functions
+	if [ $# -lt 1 ]; then
+		show_help
+		return 1
+	fi
+	timeout=$REMOTE_TIMEOUT
+	port=$REMOTE_PORT
+	cmd=$1
+	grep -v "^#" conf/hosts.list | while read line
+	do
+		host_ip=`echo $line | awk '{print $1}'`
+		username=`echo $line | awk '{print $3}'`
+		password=`echo $line | awk '{print $4}'`
+		exec_cmd_r $port $timeout $host_ip $username $password "$cmd"
+	done 
+}
+umask 027
+main "$@"
+exit $? 
+

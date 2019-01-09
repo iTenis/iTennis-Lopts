@@ -1,0 +1,42 @@
+default menu.c32
+timeout 1000
+menu title Choice CentOS/RedHat Linux  PXE Install
+
+label centos7
+      menu label Auto Install CentOS Linux ^7.x
+      kernel centos7/vmlinuz
+      append initrd=centos7/initrd.img ks=ftp://172.16.9.9/ks.cfg
+label centos6.x
+      menu label Auto Install CentOS Linux ^6.x
+      kernel centos6/vmlinuz
+      append initrd=centos6/initrd.img ks=ftp://172.16.9.9/ks.cfg
+label redhat7.x
+      menu label Auto Install RedHat Linux ^7.x
+      kernel redhat7/vmlinuz
+      append initrd=redhat7/initrd.img ks=ftp://172.16.9.9/ks.cfg
+label redhat6.x
+      menu label Auto Install RedHat Linux ^6.x
+      kernel redhat6/vmlinuz
+      append initrd=redhat6/initrd.img ks=ftp://172.16.9.9/ks.cfg
+
+label manual6.x
+      menu label Manual ^Install CentOS Linux 6.x
+      kernel centos6/vmlinuz
+      append initrd=centos6/initrd.img inst.repo=ftp://172.16.9.9/pub
+label manual7.x
+      menu label Manual ^Install CentOS Linux 7.x
+      kernel centos7/vmlinuz
+      append initrd=centos7/initrd.img inst.repo=ftp://172.16.9.9/pub
+label manual6.x
+      menu label Manual ^Install RedHat Linux 6.x
+      kernel redhat6/vmlinuz
+      append initrd=redhat6/initrd.img inst.repo=ftp://172.16.9.9/pub
+label manual7.x
+      menu label Manual ^Install RedHat Linux 7.x
+      kernel redhat7/vmlinuz
+      append initrd=redhat7/initrd.img inst.repo=ftp://172.16.9.9/pub
+label local
+     menu default
+     menu label Boot from ^local drive
+     localboot 0xffff
+    menu end

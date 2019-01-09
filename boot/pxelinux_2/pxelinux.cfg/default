@@ -1,0 +1,25 @@
+UI vesamenu.c32
+prompt 1
+timeout 15
+menu title Install Linux and Windows  by PXE
+
+label linux
+  menu label ^Install Centos7 Min
+  menu default
+  kernel ../images/centos7/vmlinuz
+  append initrd=../images/centos7/initrd.img ip=dhcp inst.repo=http://172.16.9.9/pub inst.ks=http://172.16.9.9/ks.cfg
+label linux
+  menu label ^Install Centos6 Min
+  kernel ../images/centos6/vmlinuz
+  append initrd=../images/centos6/initrd.img ip=dhcp repo=http://172.16.9.9/pub ks=http://172.16.9.9/ks.cfg ksdevice=eth0
+#label linux
+#  menu label ^Install Windows 10
+#  kernel memdisk raw iso
+#  append initrd=win/W10X32_CN_PE.iso
+#label vesa
+#  menu label Install system with ^basic video driver
+#  kernel centos7/vmlinuz
+#  append initrd=centos7/initrd.img ip=dhcp inst.xdriver=vesa nomodeset inst.repo=http://172.16.9.9/pub
+label local
+  menu label Boot from ^local drive
+  localboot 0xffff
