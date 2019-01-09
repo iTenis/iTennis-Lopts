@@ -1,6 +1,7 @@
 #!/bin/bash
 loglevel=0 #debug:0; info:1; warn:2; error:3
-logfile=logs/$0".log"
+logfile=/var/log/iTennis/$0".log"
+mkdir -p /var/log/iTennis/scripts
 function log {
     local msg;local logtype
     logtype=$1
