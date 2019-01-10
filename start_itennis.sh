@@ -280,7 +280,7 @@ case "$INPUT" in
 [c] ) echo "本地Yum仓库源配置"                   ;sh scripts/yum_config;;
 [d] ) echo "批量补全YUM包"                       ;batch_yum_completed;;
 [e] ) echo "批量配置IP地址"                      ;change_ip;;
-[f] ) echo "批量配置RAID"                        ;echo "test";;
+[f] ) echo "批量配置RAID"                        ;make_raid;;
 [g] ) echo "配置配置BMC地址"                     ;batch_config_bmcinfo;;
 [h] ) echo "解决重装操作系统无法引导"            ;clear_mbr;;
 [i] ) echo "本机免密钥通信"                      ;ssh_to_otherswithonpwd;;
