@@ -53,35 +53,31 @@ main()
 		
 		cup_core_cmd="cat /proc/cpuinfo |grep 'processor'|sort -u|wc -l"
 		cpu_core=`exec_cmd_r $port $timeout $mip $username $password "$cup_core_cmd"`		
-		echo -e "CPUCORE:\t\c" &&  exec_cmd_r $port $timeout $mip $username $password "$cup_core_cmd"
+		#echo -e "CPUCORE:\t\c" &&  exec_cmd_r $port $timeout $mip $username $password "$cup_core_cmd" &> /dev/null
 		
 		mem_cmd="cat /proc/meminfo | grep MemTotal | tr -cd '[0-9]'"
 		mem_num=`exec_cmd_r $port $timeout $mip $username $password "$mem_cmd"`
 		mem=`echo "$mem_num" | awk '{print int($0/1024/1024)}'`
-		echo -e "MEMORYS:\t\c" && exec_cmd_r $port $timeout $mip $username $password "$mem_cmd" | awk '{print int($0/1024/1024)}'
+		#echo -e "MEMORYS:\t\c" && exec_cmd_r $port $timeout $mip $username $password "$mem_cmd" | awk '{print int($0/1024/1024)}' &> /dev/null
 		
 		disk_cmd="fdisk -l | grep 'Disk /dev/' | grep -iv 'Disk /dev/mapper'|wc -l"
 		disk_num=`exec_cmd_r $port $timeout $mip $username $password "$disk_cmd"`
 		
 		disk=`echo "$disk_num" | grep -v 'WARNING'`
-		echo -e "DISKNUM:\t\c" && exec_cmd_r $port $timeout $mip $username $password "$disk_cmd"| grep -v 'WARNING'
+		#echo -e "DISKNUM:\t\c" && exec_cmd_r $port $timeout $mip $username $password "$disk_cmd"| grep -v 'WARNING' &> /dev/null
 		
 		disksize_cmd="fdisk -l | grep 'Disk /dev/' | grep -iv 'Disk /dev/mapper'"
-		#exec_cmd_r $port $timeout $mip $username $password "$disksize_cmd"| grep -v 'WARNING'  | tee -a datas/lld.conf
 		exec_cmd_r $port $timeout $mip $username $password "$disksize_cmd"| grep -v 'WARNING'|awk '{print $2 $3 $4}' | awk '/,/{printf $0}' > /tmp/itennis_disk
-		echo -e "DISKINFO:\t\c" && cat /tmp/itennis_disk && echo ""
+		#echo -e "DISKINFO:\t\c" && cat /tmp/itennis_disk &> /dev/null && echo ""
 		disk_size=`cat /tmp/itennis_disk`
-		#echo -e "`fdisk -l | grep 'Disk /dev/' | grep -iv 'Disk /dev/mapper' | grep -v 'WARNING' | awk '{print $2 $3 $4}' | awk '/,/{printf $0}'`"
 		
 		log INFO ">>$mip already processed,current:$next total:$total"
 		next=`echo $next|awk '{print int($0+1)}'`
-		
 		echo "$mip	$cpu_core	$mem	$disk	$disk_size" >> datas/lld.conf
 	done
 	echo "#管理地址 CPU虚拟核数     内存(G) 主机逻辑磁盘数量        磁盘情况"  > datas/lld.txt
 	cat -v datas/lld.conf | grep -v "^#" | tr -d '^M'  >> datas/lld.txt
 }
-
 umask 027
 main "$@"
 exit $?

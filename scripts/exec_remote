@@ -43,8 +43,6 @@ function exec_cmd_r()
     rm "${cmd_file}" -f         
     if [ $ret -ne 0 ]; then
         log ERROR "Run ${command} in ${host} failed, ret code:${ret}"
-    else
-        log INFO "Run ${command} in ${host} success"
     fi
     return $ret
 }
