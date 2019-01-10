@@ -4,7 +4,7 @@
 
 | 功能选项：功能名称                  | 使用场景说明                                                 |
 | ----------------------------------- | ------------------------------------------------------------ |
-| [1]：配置PXE环境(bios/uefi)         | 自动化安装（Redhat和Centos）操作系统，目前测试版本6和版本7均支持bios和uefi模式 |
+| [1]：配置PXE环境(bios/uefi)         | 自动化安装（Redhat和Centos）操作系统，目前测试版本6和版本7均支持 |
 | [2]：更换PXE批量安装的服务器        | 更换现有PXE批量安装的操作系统环境                            |
 | [3]：批量修改文件内容               | 修改、替换和删除内容（包括配置文件中的值或任意文本）         |
 | [4]：批量双网卡绑定Bond模式配置     | 可以做多组Bond模式的双网卡绑定                               |
@@ -23,6 +23,7 @@
 | [h]：解决重装操作系统无法引导       | 解决二次安装操作系统无法引导问题。                           |
 | [i]：本机免密钥通信                 | 本机免密钥访问其他机器                                       |
 | [j]：单机配置Bond双网卡绑定         | 单机配置Bond网卡                                             |
+| [k]：检查文件权限及属组             | 检查某个文件夹下的所有文件权限和属组是否满足                 |
 | [q]：退出                           | 退出脚本                                                     |
 | [r]：重启                           | 重启本地服务器                                               |
 
@@ -117,20 +118,6 @@ conf/partitions.conf配置说明
 a、修改配置文件（如上）
 b、上传母机的操作系统（PXE操作系统）镜像到from_iso下，如果需要批量安装的操作系统版本和此PXE的操作系统一致，则不需要再次上传到to_iso文件，如果不一致，上传对应的操作系统镜像放到to_iso文件夹下。
 c、执行启动脚本，选择功能选项：1，按照操作提示执行，完成接下来的安装。如果出现ERROR，查看相应日志解决处理即可。效果如下：
-[root@localhost iTennis-Lopt]# ./start_itennis.sh 
-****************************************Please Input***********************************
-**  [1]：配置PXE环境                      **  [a]：解决SSH慢的问题                   **
-**  [2]：更换PXE批量安装的服务器          **  [b]：时区和时间配置                    **
-**  [3]：批量修改文件内容                 **  [c]：本地Yum仓库源配置                 **
-**  [4]：批量双网卡绑定Bond模式配置       **  [d]：批量配置YUM源                     **
-**  [5]：批量双网卡绑定Team模式配置       **  [e]：批量更换IP地址                    **
-**  [6]：收集LLD配置信息,检查网络连通性   **  [f]：批量配置RAID                      **
-**  [7]：批量拷贝文件                     **  [g]：批量配置BMC地址                   **
-**  [8]：批量执行命令                     **  [h]：解决重装操作系统无法引导          **
-**  [9]：批量拷贝文件到本地               **  [i]：本机免密钥通信                    **
-**  [q]：退出                             **  [j]：单机配置Bond双网卡绑定            **
-**  [r]：重启                             **  [r]：重启                              **
-***************************************************************************************
 Please input [0-9,a-j,q,r]: 1
 配置PXE环境
 [INFO]	2019-01-07 17:49:57 ----------------Start check your configuration---------------- (script:config_pxe.sh function: main line:8)
@@ -173,50 +160,6 @@ mkdir: cannot create directory ‘/etc/yum.repos.d/bak’: File exists
 ‘boot/efi/BOOTX64.efi’ -> ‘/var/lib/tftpboot/efi/BOOTX64.efi’
 ‘boot/efi/efidefault’ -> ‘/var/lib/tftpboot/efi/efidefault’
 ‘boot/efi/splash.xpm.gz’ -> ‘/var/lib/tftpboot/efi/splash.xpm.gz’
-‘boot/images/centos/6.6/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/6.6/initrd.img’
-‘boot/images/centos/6.6/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/6.6/vmlinuz’
-‘boot/images/centos/6.7/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/6.7/initrd.img’
-‘boot/images/centos/6.7/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/6.7/vmlinuz’
-‘boot/images/centos/6.8/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/6.8/initrd.img’
-‘boot/images/centos/6.8/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/6.8/vmlinuz’
-‘boot/images/centos/6.9/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/6.9/initrd.img’
-‘boot/images/centos/6.9/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/6.9/vmlinuz’
-‘boot/images/centos/7.0/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/7.0/initrd.img’
-‘boot/images/centos/7.0/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/7.0/vmlinuz’
-‘boot/images/centos/7.1/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/7.1/initrd.img’
-‘boot/images/centos/7.1/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/7.1/vmlinuz’
-‘boot/images/centos/7.2/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/7.2/initrd.img’
-‘boot/images/centos/7.2/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/7.2/vmlinuz’
-‘boot/images/centos/7.3/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/7.3/initrd.img’
-‘boot/images/centos/7.3/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/7.3/vmlinuz’
-‘boot/images/centos/7.4/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/7.4/initrd.img’
-‘boot/images/centos/7.4/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/7.4/vmlinuz’
-‘boot/images/centos/7.5/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/7.5/initrd.img’
-‘boot/images/centos/7.5/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/7.5/vmlinuz’
-‘boot/images/centos/7.6/initrd.img’ -> ‘/var/lib/tftpboot/images/centos/7.6/initrd.img’
-‘boot/images/centos/7.6/vmlinuz’ -> ‘/var/lib/tftpboot/images/centos/7.6/vmlinuz’
-‘boot/images/redhat/6.6/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/6.6/initrd.img’
-‘boot/images/redhat/6.6/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/6.6/vmlinuz’
-‘boot/images/redhat/6.7/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/6.7/initrd.img’
-‘boot/images/redhat/6.7/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/6.7/vmlinuz’
-‘boot/images/redhat/6.8/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/6.8/initrd.img’
-‘boot/images/redhat/6.8/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/6.8/vmlinuz’
-‘boot/images/redhat/6.9/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/6.9/initrd.img’
-‘boot/images/redhat/6.9/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/6.9/vmlinuz’
-‘boot/images/redhat/7.0/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/7.0/initrd.img’
-‘boot/images/redhat/7.0/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/7.0/vmlinuz’
-‘boot/images/redhat/7.1/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/7.1/initrd.img’
-‘boot/images/redhat/7.1/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/7.1/vmlinuz’
-‘boot/images/redhat/7.2/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/7.2/initrd.img’
-‘boot/images/redhat/7.2/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/7.2/vmlinuz’
-‘boot/images/redhat/7.3/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/7.3/initrd.img’
-‘boot/images/redhat/7.3/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/7.3/vmlinuz’
-‘boot/images/redhat/7.4/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/7.4/initrd.img’
-‘boot/images/redhat/7.4/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/7.4/vmlinuz’
-‘boot/images/redhat/7.5/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/7.5/initrd.img’
-‘boot/images/redhat/7.5/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/7.5/vmlinuz’
-‘boot/images/redhat/7.6/initrd.img’ -> ‘/var/lib/tftpboot/images/redhat/7.6/initrd.img’
-‘boot/images/redhat/7.6/vmlinuz’ -> ‘/var/lib/tftpboot/images/redhat/7.6/vmlinuz’
 ‘boot/kickstarts/ks.cfg’ -> ‘/var/www/html/kickstarts/ks.cfg’
 ks.cfg is create Successful
 /var/lib/tftpboot/pxelinux/pxelinux.cfg/default is create Successful
