@@ -32,7 +32,13 @@ main()
 		host_ip=`echo $line | awk '{print $1}'`
 		username=`echo $line | awk '{print $3}'`
 		password=`echo $line | awk '{print $4}'`
-		exec_cmd_r $port $timeout $host_ip $username $password "$cmd"
+                echo "[`date`] exec_cmd_r $port $timeout $host_ip $username $password \"$cmd\"" | tr -d '\r' >> /var/log/iTennis/${host_ip}.log
+                exec_cmd_r $port $timeout $host_ip $username $password "$cmd" | tee -a /var/log/iTennis/${host_ip}.log
+		if [ $? = 0 ];then
+                        log INFO "$cmd execute in $host_ip success"
+                else
+                        log ERROR "$cmd execute in $host_ip failed"
+                fi
 	done 
 }
 umask 027

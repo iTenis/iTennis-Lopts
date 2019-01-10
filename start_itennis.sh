@@ -262,7 +262,7 @@ echo "**  [7]：批量拷贝文件                     **  [g]：批量配置BMC
 echo "**  [8]：批量执行命令                     **  [h]：解决重装操作系统无法引导          **"
 echo "**  [9]：批量拷贝文件到本地               **  [i]：本机免密钥通信                    **"
 echo "**  [q]：退出                             **  [j]：单机配置Bond双网卡绑定            **"
-echo "**  [r]：重启                             **  [r]：重启                              **"
+echo "**  [r]：重启                             **  [k]：检查文件权限及属组                **"
 echo "******************************@iTennis By xiehuisheng@hotmial.com**********************"
 read -p "Please input [0-9,a-j,q,r]: " INPUT
 case "$INPUT" in
@@ -285,6 +285,7 @@ case "$INPUT" in
 [h] ) echo "解决重装操作系统无法引导"            ;clear_mbr;;
 [i] ) echo "本机免密钥通信"                      ;ssh_to_otherswithonpwd;;
 [j] ) echo "单机配置Bond双网卡绑定"              ;sh scripts/bonding;;
+[k] ) echo "检查文件权限及属组"                  ;sh check_permission;;
 [q] ) echo "退出"                                ;exit 0;;
 [r] ) echo "重启"                                ;reboot;;
 * ) echo "Input Error!" ;;

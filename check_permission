@@ -1,0 +1,42 @@
+#!/bin/bash
+source conf/itennis.conf
+source scripts/log_print
+
+cmd=""
+read -p "please input permission value [e.g. 750 or !750]: "
+perm=${REPLY}
+if [ "$perm" == "" ];
+then
+	log ERROR "permission is not null"
+	exit
+fi
+if [[ "`echo $perm | cut -c 1`" == '!' ]];then
+        dnots='!'
+        perm=`echo $perm | cut -c2-${#perm}`
+fi
+
+read -p "please input director value [e.g. /tmp]: "
+dir=$REPLY
+if [ "$dir" == "" ];
+then
+        log ERROR "director is not null"
+        exit
+fi
+
+read -p "please input user value [e.g. root or !root]: "
+users=$REPLY
+if [[ "$users" == "" ]];then
+	utmp=""
+else
+	if [[ "`echo $users | cut -c 1`" == '!' ]];then
+        	unots='!'
+        	users=`echo $users | cut -c2-${#users}`
+		utmp="$unots -user $users"
+	else
+		utmp="-user $users"
+	fi
+fi
+
+cmd="find $dir $dnots -perm ${perm} $utmp -ls"
+log INFO "sh remote_cmd \"$cmd\""
+sh remote_cmd "$cmd"
