@@ -15,15 +15,15 @@ TYPE=Bond
 ONBOOT=yes
 BOOTPROTO=static
 BONDING_MASTER=yes
-BONDING_OPTS="mode=${modeinfo} miimon=50 updelay=0 downdelay=0 lacp_rate=fast"
+BONDING_OPTS="mode=${modeinfo} miimon=50 updelay=0 downdelay=0"
 IPADDR=$ipaddr
 GATEWAY=$gateway
 NETMASK=$netmask
 EOF
 ) > ${interbonddir}/ifcfg-${bondethxy}
 
-cp ${interbonddir}/ifcfg-$bondethx ${interbonddir}/ifcfg-$bondethx-bak
-cp ${interbonddir}/ifcfg-$bondethy ${interbonddir}/ifcfg-$bondethy-bak
+cp ${interbonddir}/ifcfg-$bondethx /tmp/ifcfg-$bondethx-bak
+cp ${interbonddir}/ifcfg-$bondethy /tmp/ifcfg-$bondethy-bak
 
 (
 cat << EOF
@@ -62,6 +62,8 @@ cat << EOF
 BOOTPROTO=none
 ONBOOT=yes
 MASTER=${bondethxy}
-SLAVE=yes
+LAVE=yes
 EOF
 ) >> ${interbonddir}/ifcfg-$bondethy
+service NetworkManger stop
+chkconfig NetworkManger off
