@@ -67,6 +67,12 @@ python
 %end
 #%addon com_redhat_kdump --disable --reserve-mb='auto'
 #%end
+
+%post
+sed -i "/UseDNS/d" /etc/ssh/sshd_config
+echo 'UseDNS no' >> /etc/ssh/sshd_config
+echo 0> /etc/resolv.conf
+%end
 EOF
 ) > $5
 partlist=""
