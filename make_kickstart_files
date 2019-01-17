@@ -70,7 +70,7 @@ python
 EOF
 ) > $5
 partlist=""
-cat conf/partitions.conf | while read lines
+grep -v "^#" conf/partitions.conf | while read lines
 do
 if [ `echo $lines | awk '{print $3}'` = 1  ];then
 partlist="part `echo $lines | awk '{print $1}'` --fstype=\"`echo $lines | awk '{print $2}'`\" --grow --ondisk=sda --size=`echo $lines | awk '{print $3}'`"
