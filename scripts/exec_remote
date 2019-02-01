@@ -33,7 +33,7 @@ function exec_cmd_r()
 	ping -c 3 -i 0.2 -W 3 $host &> /dev/null
         if [ $? != 0 ];then
                 log ERROR "Ping $host failed"
-                exit
+                exit 1
         fi
 
     #scripts/remote.sh -i 192.168.38.141 -p root -t 5 -m ssh-cmd -c "ls ~"
@@ -81,7 +81,7 @@ function cp_file_to_r()
         ping -c 3 -i 0.2 -W 3 $host &> /dev/null
         if [ $? != 0 ];then
                 log ERROR "Ping $host failed"
-                exit
+                return 1
         fi
     #./remote.sh -i 192.168.38.141 -p root -t 5 -m ssh-cmd -c "ls ~"
     bash scripts/remote.sh -i "$host" -P "$g_port" -u "$g_user_name" -p "$passwd" -t "$g_timeout" -m "scp-out" -s "$src" -d "$dst" > /dev/null 2>&1
@@ -130,7 +130,7 @@ function cp_file_from_r()
         ping -c 3 -i 0.2 -W 3 $host &> /dev/null
         if [ $? != 0 ];then
                 log ERROR "Ping $host failed"
-                exit
+                return 1
         fi
     #获取 源文件的文件名称
     name="${host}_$(basename "${src}")"

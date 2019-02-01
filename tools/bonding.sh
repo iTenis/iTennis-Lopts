@@ -62,8 +62,8 @@ cat << EOF
 BOOTPROTO=none
 ONBOOT=yes
 MASTER=${bondethxy}
-LAVE=yes
+SLAVE=yes
 EOF
 ) >> ${interbonddir}/ifcfg-$bondethy
-service NetworkManger stop
-chkconfig NetworkManger off
+service NetworkManager stop
+chkconfig NetworkManager off

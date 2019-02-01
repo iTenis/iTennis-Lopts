@@ -1,8 +1,15 @@
 #!/bin/bash
-source conf/itennis.conf
-source scripts/log_print
+source_functions()
+{
+        . conf/itennis.conf
+        . scripts/log_print
+        . scripts/exec_remote
+}
 
-cmd=""
+source_functions
+CMDS_LIST=/tmp/cmds_list.$$
+CONF_LIST=${HOSTS_CONF}
+BG='n'
 read -p "please input permission value [e.g. 750 or !750]: "
 perm=${REPLY}
 if [ "$perm" == "" ];
@@ -37,6 +44,10 @@ else
 	fi
 fi
 
-cmd="find $dir $dnots -perm ${perm} $utmp -ls"
-log INFO "sh remote_cmd \"$cmd\""
-sh remote_cmd "$cmd"
+(
+cat << EOF
+find $dir $dnots -perm ${perm} $utmp -ls
+EOF
+) > ${CMDS_LIST}
+sh exec_morelist.sh ${CONF_LIST} ${CMDS_LIST} $bg
+rm /tmp/*.$$
