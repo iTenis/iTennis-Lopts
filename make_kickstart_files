@@ -15,7 +15,6 @@ skipx
 logging --level=info
 reboot
 timezone --utc Asia/Shanghai
-xconfig  --startxonboot
 network  --bootproto=dhcp --device=eth0 --onboot=on
 bootloader --location=mbr
 zerombr
