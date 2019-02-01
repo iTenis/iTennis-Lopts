@@ -303,7 +303,18 @@ esac
 echo -e "\n"
 display
 }
+help()
+{
+	echo "This is a generic command line parser demo."
+	echo "USAGE EXAMPLE: ./cmdparser -l hello -f -- -somefile1 somefile2"
+	echo "HELP"
+	exit 0
+}
 source_functions
 #PS4="#[Note]:"
 #set -x
-display
+if [ ! -n "$1" ];then
+	display
+elif [[ "$1" = "-v"  ]];then
+	echo "iTennis version:$VERSION"
+fi
