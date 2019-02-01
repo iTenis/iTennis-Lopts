@@ -24,55 +24,7 @@ clearpart --all --initlabel
 #part /tmp --fstype="ext4" --ondisk=sda --size=20480
 #part swap --fstype="swap" --size=500
 
-%post
-service iptables stop
-chkconfig iptables off
-%end
-
-%packages --ignoremissing
-@Base
-@Core
-@Desktop
-@Fonts
-@General Purpose Desktop
-@Internet Browser
-@Printing client
-@X Window System
-@base
-@core
-@desktop-debugging
-@dial-up
-@directory-client
-@fonts
-@gnome-desktop
-@guest-desktop-agents
-@input-methods
-@internet-browser
-@java-platform
-@multimedia
-@network-file-system-client
-@print-client
-@x11
-binutils
-chrony
-ftp
-gcc
-kernel-devel
-kexec-tools
-make
-open-vm-tools
-patch
-python
-
-%end
-#%addon com_redhat_kdump --disable --reserve-mb='auto'
-#%end
-
-%post
-sed -i "/UseDNS/d" /etc/ssh/sshd_config
-echo 'UseDNS no' >> /etc/ssh/sshd_config
-echo 0> /etc/resolv.conf
-%end
+part /boot/efi --fstype="efi" --ondisk=sda --size=300
 EOF
 ) > $5
 partlist=""
@@ -85,5 +37,39 @@ partlist="part `echo $lines | awk '{print $1}'` --fstype=\"`echo $lines | awk '{
 fi
 echo $partlist >> $5
 done
+(
+cat << EOF
+
+%packages --ignoremissing
+@base
+@core
+@fonts
+@compat-libraries
+@debugging
+@development
+gcc
+make
+tree
+nmap
+sysstat
+lrzsz
+dos2unix
+telnet
+python
+%end
+
+#%addon com_redhat_kdump --disable --reserve-mb='auto'
+#%end
+
+%post
+sed -i "/UseDNS/d" /etc/ssh/sshd_config
+echo 'UseDNS no' >> /etc/ssh/sshd_config
+echo 0> /etc/resolv.conf
+service iptables stop
+chkconfig iptables off
+%end
+EOF
+) >> $5
+
 echo -e "ks.cfg is create \033[32mSuccessful\033[0m"
 
