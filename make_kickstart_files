@@ -43,7 +43,6 @@ cat << EOF
 @base
 @core
 @fonts
-@compat-libraries
 @debugging
 @development
 gcc
@@ -51,8 +50,6 @@ make
 tree
 nmap
 sysstat
-lrzsz
-dos2unix
 telnet
 python
 %end
