@@ -80,7 +80,7 @@ function config_time_zero()
         BG='y'
 (
 cat << EOF
-ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime;hwclock &> /dev/null;date -s \"`date`\" &> /dev/null
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime;hwclock &> /dev/null;date -s \"`date '+%Y-%m-%d %H:%M:%S'`\" &> /dev/null
 EOF
 ) > ${CMDS_LIST}
 
