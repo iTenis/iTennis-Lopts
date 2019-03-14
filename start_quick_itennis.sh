@@ -168,9 +168,19 @@ function batch_bond()
                 exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "$cmd"
                 exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "rm -rf $tmpdir"
                 log WARN "Modification Configuration Completed,Network is restarting..."
-                exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "service network restart" &> /dev/null
-        done
-
+                #exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "service network restart" &> /dev/null
+	done	
+	CMDS_LIST=/tmp/cmds_list.$$
+        CONF_LIST=/tmp/conf_list.$$
+        awk '{print $1"\t"$1"\t"$2"\t"$3}' conf/bond_and_team.conf > ${CONF_LIST}
+        BG='y'
+(
+cat << EOF
+service network restart &> /dev/null
+EOF
+) > ${CMDS_LIST}
+        sh exec_morelist.sh ${CONF_LIST} ${CMDS_LIST} $BG
+        rm /tmp/*.$$
 }
 function batch_team()
 {
@@ -206,9 +216,19 @@ function batch_team()
                 exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "$cmd"
                 exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "rm -rf $tmpdir"
                 log WARN "Modification Configuration Completed,Network is restarting..."
-                exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "service network restart" &> /dev/null
-
-        done
+                #exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "service network restart" &> /dev/null
+	done
+	CMDS_LIST=/tmp/cmds_list.$$
+        CONF_LIST=/tmp/conf_list.$$
+	awk '{print $1"\t"$1"\t"$2"\t"$3}' conf/bond_and_team.conf > ${CONF_LIST}	
+        BG='y'
+(
+cat << EOF
+service network restart &> /dev/null
+EOF
+) > ${CMDS_LIST}
+        sh exec_morelist.sh ${CONF_LIST} ${CMDS_LIST} $BG
+        rm /tmp/*.$$
 
 }
 function change_ip()
@@ -240,6 +260,18 @@ function change_ip()
                 log WARN "Modification Configuration Completed,Network is restarting..."
                 exec_cmd_r $port $timeout ${arr[2]} ${arr[0]} ${arr[1]} "service network restart" &> /dev/null
         done
+        CMDS_LIST=/tmp/cmds_list.$$
+        CONF_LIST=/tmp/conf_list.$$
+	awk '{print $3"\t"$3"\t"$1"\t"$2}' conf/change_ip.conf  | grep -v "#" > ${CONF_LIST}
+        BG='y'
+(
+cat << EOF
+service network restart &> /dev/null
+EOF
+) > ${CMDS_LIST}
+        sh exec_morelist.sh ${CONF_LIST} ${CMDS_LIST} $BG
+        rm /tmp/*.$$
+
 }
 function batch_change_rootpwd()
 {
