@@ -30,7 +30,7 @@ main()
                 else
                         log ERROR "exec_cmd_r $port $timeout $host_ip $username $password \"sh $tmpdir/megacli/check.sh $disknum $raidmode\" execute in $host_ip failed"
                 fi
-		exec_cmd_r $port $timeout $host_ip $username $password "rm -rf $tmpdir" | tee -a /var/log/iTennis/${host_ip}.log
+		exec_cmd_r $port 30 $host_ip $username $password "rm -rf $tmpdir" | tee -a /var/log/iTennis/${host_ip}.log
                 if [ $? = 0 ];then
                         log INFO "log clen execute in $host_ip success"
                 else
