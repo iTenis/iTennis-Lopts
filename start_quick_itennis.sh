@@ -167,7 +167,7 @@ function batch_bond()
                 cp_file_to_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "$src" "$tmpdir"
                 exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "$cmd"
                 exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "rm -rf $tmpdir"
-                log WARN "Modification Configuration Completed,Network is restarting..."
+                #log WARN "Modification Configuration Completed,Network is restarting..."
                 #exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "service network restart" &> /dev/null
 	done	
 	CMDS_LIST=/tmp/cmds_list.$$
@@ -215,7 +215,7 @@ function batch_team()
                 cp_file_to_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "$src" "$tmpdir"
                 exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "$cmd"
                 exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "rm -rf $tmpdir"
-                log WARN "Modification Configuration Completed,Network is restarting..."
+                #log WARN "Modification Configuration Completed,Network is restarting..."
                 #exec_cmd_r $port $timeout ${arr[0]} ${arr[1]} ${arr[2]} "service network restart" &> /dev/null
 	done
 	CMDS_LIST=/tmp/cmds_list.$$

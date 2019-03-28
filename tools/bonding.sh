@@ -7,6 +7,8 @@ modeinfo=$2
 ipaddr=$3       #绑定接口的ip地址
 gateway=$5    #绑定接口的网关
 netmask=$4     #绑定接口的子网掩码
+if [ ! -f "${interbonddir}/ifcfg-$bondethx" ]; then  echo -e "\033[31m[ERROR]	不存在该网卡:${ipaddr} $bondethx\033[0m";exit; fi
+if [ ! -f "${interbonddir}/ifcfg-$bondethy" ]; then  echo -e "\033[31m[ERROR]	不存在该网卡:${ipaddr} $bondethy\033[0m";exit; fi
 (
 cat << EOF
 DEVICE=${bondethxy}
