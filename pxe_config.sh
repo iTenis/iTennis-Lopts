@@ -33,13 +33,13 @@ function isNext()
 isNext
 
 #配置网络接口
-inetwork $BIND_INTERFACE $SERVER_IP $SERVER_NETMASK
-if [ $? == 0 ];then
-	log INFO  "Interface $BIND_INTERFACE configuration success"
-else
-	log ERROR  "Interface $BIND_INTERFACE configuration failed"
-	exit
-fi
+#inetwork $BIND_INTERFACE $SERVER_IP $SERVER_NETMASK
+#if [ $? == 0 ];then
+#	log INFO  "Interface $BIND_INTERFACE configuration success"
+#else
+#	log ERROR  "Interface $BIND_INTERFACE configuration failed"
+#	exit
+#fi
 
 #配置YUM本地仓库源
 sh scripts/yum_config
@@ -53,6 +53,18 @@ fi
 
 #补全需要的补丁包
 i_packets
+
+log INFO "NOTE:Initial environment configuration completed."
+isNext
+
+#配置网络接口
+inetwork $BIND_INTERFACE $SERVER_IP $SERVER_NETMASK
+if [ $? == 0 ];then
+        log INFO  "Interface $BIND_INTERFACE configuration success"
+else
+        log ERROR  "Interface $BIND_INTERFACE configuration failed"
+        exit
+fi
 
 sed -i '/disable/s/yes/no/' /etc/xinetd.d/tftp
 
