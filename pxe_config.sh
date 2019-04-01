@@ -147,10 +147,10 @@ cp -rvf boot/efi /var/lib/tftpboot/
 #cp -rvf boot/images /var/lib/tftpboot/
 cp -rvf boot/kickstarts /var/www/html/
 
-sh make_kickstart_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $ROOT_PWD /var/www/html/kickstarts/${INSTALL_OS}_${OS_VERSION}_ks.cfg
-sh make_biosdefault_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
-sh make_uefigrub_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
-sh make_efidefault_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
+sh locals/make_kickstart_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $ROOT_PWD /var/www/html/kickstarts/${INSTALL_OS}_${OS_VERSION}_ks.cfg
+sh locals/make_biosdefault_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
+sh locals/make_uefigrub_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
+sh locals/make_efidefault_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
 
 log INFO "check need to install os file"
 if [ `ls -A to_iso/*.iso | wc -w` == 0 ];then

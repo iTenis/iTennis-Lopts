@@ -1,0 +1,52 @@
+#!/bin/bash
+source conf/itennis.conf
+source scripts/log_print
+source scripts/network_config
+source scripts/packets_install
+
+isContinue='y'
+function isNext()
+{
+        read -p 'Confirm whether to continue?[y/n]' isContinue
+        if [ "$isContinue" = "n" ];then
+		exit; 
+	fi
+}
+mkdir -p /var/www/html/os/$INSTALL_OS/$OS_VERSION
+mkdir -p /var/lib/tftpboot/images/$INSTALL_OS/$OS_VERSION
+log INFO "check need to install os file"
+if [ `ls -A to_iso/*.iso | wc -w` == 0 ];then
+        echo "**************************************************"
+        ls from_iso/*.iso
+        echo "**************************************************"
+        isNext
+        umount /var/www/html/os/$INSTALL_OS/${OS_VERSION}
+        mount -o loop from_iso/*.iso /var/www/html/os/$INSTALL_OS/${OS_VERSION};
+else
+        echo "**************************************************"
+        ls to_iso/*.iso
+        echo "**************************************************"
+        isNext
+        umount /var/www/html/os/$INSTALL_OS/${OS_VERSION};
+        mount -o loop to_iso/*.iso /var/www/html/os/$INSTALL_OS/${OS_VERSION};
+fi
+cp -rvf /var/www/html/os/$INSTALL_OS/${OS_VERSION}/isolinux/{initrd.img,vmlinuz} /var/lib/tftpboot/images/$INSTALL_OS/$OS_VERSION
+if [ $? == 0 ];then
+        log INFO "system images is ready success"
+else
+        log ERROR "system images is ready failed, please check you os's initrd.img,vmlinuz"
+        exit
+fi
+
+sh locals/make_kickstart_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $ROOT_PWD /var/www/html/kickstarts/${INSTALL_OS}_${OS_VERSION}_ks.cfg
+sh locals/make_biosdefault_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
+sh locals/make_uefigrub_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
+sh locals/make_efidefault_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
+if [ `echo $OS_VERSION | awk -F '.' '{print $1}'` == 7 ] ;then
+        sed -i "s/efi\/BOOTX64.efi/uefi\/shim.efi/g" /etc/dhcp/dhcpd.conf
+	sed -i "s/#%addon/%addon/g" /var/www/html/kickstarts/${INSTALL_OS}_${OS_VERSION}_ks.cfg
+        sed -i "s/#%end/%end/g" /var/www/html/kickstarts/${INSTALL_OS}_${OS_VERSION}_ks.cfg
+else
+        sed -i "s/uefi\/shim.efi/efi\/BOOTX64.efi/g" /etc/dhcp/dhcpd.conf
+fi
+log INFO "pxe server ready to complete"

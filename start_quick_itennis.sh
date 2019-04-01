@@ -325,7 +325,7 @@ case "$INPUT" in
 [1] ) echo "配置PXE环境"                                  ;sh pxe_config.sh;;
 [2] ) echo "批量双网卡绑定Bond模式配置"                   ;batch_bond;;
 [3] ) echo "时区和时间配置"                               ;config_time_zero;;
-[4] ) echo "批量配置RAID"                                 ;sh make_raid;;
+[4] ) echo "批量配置RAID"                                 ;sh locals/make_raid;;
 [5] ) echo "收集硬件配置信息,检查网络连通性"              ;sh check_lld;;
 [6] ) echo "批量配置YUM源"                                ;batch_yum_completed;;
 [7] ) echo "批量拷贝文件"                                 ;sh generate_scps.sh;;
