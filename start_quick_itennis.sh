@@ -290,9 +290,21 @@ EOF
         sh exec_morelist.sh ${CONF_LIST} ${CMDS_LIST} $BG
         rm /tmp/*.$$
 }
-function more_funcitons()
+
+function more_functions()
 {
-	echo "developing..."
+echo "*************Please Input******************"
+echo "**  [1]：获到DHCP服务器分发的IP地址      **"
+echo "**  [q]：退出                            **"
+echo "****@iTennis By xiehuisheng@hotmial.com****"
+read -p "Please input [0-9,q]: " INPUT
+case "$INPUT" in
+[1] ) echo "获到DHCP服务器分发的IP地址"                   ;sh scripts_more/get_dhcp_ip.sh;;
+[q] ) echo "退出"                                         ;display;;
+* ) echo "Input Error!" ;;
+esac
+echo -e "\n"
+more_functions
 }
 function display()
 {
