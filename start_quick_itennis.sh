@@ -176,7 +176,10 @@ function batch_bond()
         BG='y'
 (
 cat << EOF
-service network restart &> /dev/null
+service NetworkManager stop &> /dev/null || echo "Graphical Network Manager service stop"
+chkconfig NetworkManager off &> /dev/null || echo "Graphical Network Manager service off"
+#service network restart &> /dev/null || echo "Network is restarting,could be timeout!"
+echo "Network is restarting,could be timeout!" && service network restart &> /dev/null
 EOF
 ) > ${CMDS_LIST}
         sh exec_morelist.sh ${CONF_LIST} ${CMDS_LIST} $BG

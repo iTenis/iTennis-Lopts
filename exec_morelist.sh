@@ -40,7 +40,7 @@ do
 		if [[ $? = 0 ]];then
 			log WARN "The current ${i} , ${arr[0]} is finshed" >> $RESULT_ALL
 		else
-			log ERROR "The current ${i} , ${arr[0]} is execute failed , pleace chect it" >> $RESULT_ALL
+			log ERROR "The current ${i} , ${arr[0]} is execute failed , pleace check it" >> $RESULT_ALL
 		fi
 	} || {
 		log ERROR  "thread error"

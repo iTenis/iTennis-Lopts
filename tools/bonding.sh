@@ -67,5 +67,3 @@ MASTER=${bondethxy}
 SLAVE=yes
 EOF
 ) >> ${interbonddir}/ifcfg-$bondethy
-service NetworkManager stop
-chkconfig NetworkManager off
