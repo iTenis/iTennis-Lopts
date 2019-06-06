@@ -10,7 +10,6 @@ function isNext()
 	else
 		isNext
         fi
-
 }
 source_functions()
 {
@@ -360,6 +359,7 @@ help()
 source_functions
 #PS4="#[Note]:"
 #set -x
+for file in `ls  conf/* | grep -v "itennis.conf"`; do sed -i '/^\s*$/d' $file; done
 if [ ! -n "$1" ];then
 	display
 elif [[ "$1" = "-v"  ]];then
