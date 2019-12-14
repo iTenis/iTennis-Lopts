@@ -104,7 +104,7 @@ EOF
 
 mkdir -p /var/lib/tftpboot/pxelinux/pxelinux.cfg
 mkdir -p /var/lib/tftpboot/uefi
-mkdir -p /var/www/html/{kickstarts,os}
+mkdir -p /var/www/html/{kickstarts,os,driver}
 <<!
 for osdir in $SUPPORT_OS;do
 	for osversion in $SUPPORT_VERSION;do
@@ -146,8 +146,18 @@ cp -rvf boot/uefi /var/lib/tftpboot/
 cp -rvf boot/efi /var/lib/tftpboot/
 #cp -rvf boot/images /var/lib/tftpboot/
 cp -rvf boot/kickstarts /var/www/html/
+cp -rvf to_iso/driver /var/www/html/
+
+driver_iso=`ls -A to_iso/driver/*.iso`
 
 sh locals/make_kickstart_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $ROOT_PWD /var/www/html/kickstarts/${INSTALL_OS}_${OS_VERSION}_ks.cfg
+if [ `ls -A to_iso/driver/*.iso | wc -w` != 0 ];then
+	echo "=============== ${driver_iso}=====================";
+	dname=`echo $(basename ${driver_iso})`
+	sed -i "10a\driverdisk --source=http://$SERVER_IP/driver/$dname" /var/www/html/kickstarts/${INSTALL_OS}_${OS_VERSION}_ks.cfg
+fi
+
+
 sh locals/make_biosdefault_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
 sh locals/make_uefigrub_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
 sh locals/make_efidefault_files $SERVER_IP $INSTALL_OS ${OS_VERSION} $INSTALL_INTERFACE
